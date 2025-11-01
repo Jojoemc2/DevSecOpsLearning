@@ -9,6 +9,7 @@ on:
 jobs:
   test-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -27,15 +28,14 @@ jobs:
       - name: Run Vitest
         run: npx vitest run
 
-      - name: Deploy to Vercel (Production)
+      - name: Deploy to Vercel
         if: github.event_name == 'push'
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          # ถ้าใช้ Personal Account, ไม่ต้องใช้ VERCEL_ORG_ID
         run: |
-          npm install -g vercel
-          vercel --prod \
-            --token $VERCEL_TOKEN \
-            --project $VERCEL_PROJECT_ID \
-            --confirm
+          npm install --global vercel
+          vercel pull --yes --token=$VERCEL_TOKEN --environment=production
+          vercel build --token=$VERCEL_TOKEN
+          vercel deploy --prebuilt --token=$VERCEL_TOKEN --prod
