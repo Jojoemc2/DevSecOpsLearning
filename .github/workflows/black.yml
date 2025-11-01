@@ -32,10 +32,7 @@ jobs:
         if: github.event_name == 'push'
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
-          npm install --global vercel
-          vercel pull --yes --token=$VERCEL_TOKEN --environment=production
-          vercel build --token=$VERCEL_TOKEN
-          vercel deploy --prebuilt --token=$VERCEL_TOKEN --prod
+          npm install -g vercel
+          # Deploy directly; no --project flag needed
+          vercel --prod --confirm --token=$VERCEL_TOKEN
